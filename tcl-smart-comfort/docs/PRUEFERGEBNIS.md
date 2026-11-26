@@ -65,3 +65,8 @@ Backlight 20, LowBlueRay 1, Bildmodus 60, Helligkeit 50, Kontrast 100, HDR-Modus
   wieder „Google-TV-Apps · schon richtig“ (Plan 20/an = TV-Zustand).
 - Noch am TV zu bestätigen: Tuner-ID (1 oder 2) beim normalen Fernsehen, Verhalten nach Standby und nach
   Neustart (TGuard), erster Planwechsel am 27.11. um 07:00 Uhr.
+- Fernsehen läuft bei Maxi über eine IPTV-App (Quelle 21), ein Tuner-Test ist nicht nötig.
+- Standby-Test 19:07 Uhr: Die App meldete nach dem Einschalten „Aufwachen · Google-TV-Apps · schon richtig“.
+  Sie lief also nach dem Standby ohne Mac weiter. Die Helligkeit stand vor dem Standby noch auf 20 (die
+  Abweichung auf 30 kam nicht zustande), deshalb ist das Zurückstellen nach dem Aufwachen noch nicht belegt.
+  Nach dem Standby war ADB (Port 5555) aus: Wahrscheinlich startet der TV beim Einschalten neu.
