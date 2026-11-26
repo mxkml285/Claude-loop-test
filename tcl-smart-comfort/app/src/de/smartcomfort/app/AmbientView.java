@@ -14,7 +14,8 @@ import android.view.View;
  * Calm, slowly moving backdrop: a near-black base with three soft lights (champagne, deep blue, warm
  * amber) that drift on long, never-repeating-looking paths and breathe very gently. One full drift takes
  * about 40 seconds, so it reads as "alive" without ever pulling the eye. Redraws at most ~30 times a
- * second and only while the start page is visible.
+ * second and only while the start page is visible. On top, LightTrail streaks glide from left to right
+ * on calm waves, now and then with one slow loop.
  */
 final class AmbientView extends View {
     private static final long FRAME_MS = 33;
@@ -37,6 +38,12 @@ final class AmbientView extends View {
             new Light(Color.rgb(200, 120, 80), 46, 0.50f, 0.50f, 0.55f, 0.34f, 0.26f, 53, 43, 29, 3.1f),
     };
     private final Paint base = new Paint();
+    /** Three streaks of light, started a few seconds apart so they rarely cross the screen together. */
+    private final LightTrail[] trails;
+    {
+        double now = SystemClock.uptimeMillis() / 1000.0;
+        trails = new LightTrail[]{new LightTrail(11, now + 1), new LightTrail(23, now + 8), new LightTrail(37, now + 15)};
+    }
     private boolean running;
     private long lastFrame;
 
@@ -78,6 +85,7 @@ final class AmbientView extends View {
             c.drawCircle(0, 0, l.radius * w, l.paint);
             c.restore();
         }
+        for (LightTrail tr : trails) tr.draw(c, t, w, h);
         if (running) {
             long now = SystemClock.uptimeMillis();
             long wait = Math.max(0, FRAME_MS - (now - lastFrame));
