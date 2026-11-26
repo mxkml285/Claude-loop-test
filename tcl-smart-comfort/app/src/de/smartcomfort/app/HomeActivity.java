@@ -373,22 +373,12 @@ public class HomeActivity extends Activity {
     // ---------------------------------------------------------------- actions
 
     private void launch(String pkg) {
-        PackageManager pm = getPackageManager();
-        Intent i = pm.getLeanbackLaunchIntentForPackage(pkg);
-        if (i == null) i = pm.getLaunchIntentForPackage(pkg);
-        if (i == null) { toast("Nicht installiert: " + pkg); return; }
-        start(i);
+        if (!Launch.app(this, pkg)) toast("Nicht installiert: " + pkg);
     }
 
     /** Opens HDMI 2 directly through TCL's own TV app (the red "TV" app), no input menu. */
     private void openPs5() {
-        Uri uri = TvContract.buildChannelUriForPassthroughInput(PS5_INPUT);
-        Intent i = new Intent(Intent.ACTION_VIEW, uri).setComponent(TCL_TV_ACTIVITY);
-        try {
-            startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } catch (ActivityNotFoundException e) {
-            launch(TCL_TV);
-        }
+        if (!Launch.ps5(this)) toast("Konnte nicht öffnen");
     }
 
     private void openSettings() { start(new Intent(Settings.ACTION_SETTINGS)); }

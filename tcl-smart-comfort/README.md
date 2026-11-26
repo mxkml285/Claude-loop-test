@@ -42,7 +42,9 @@ adb shell cmd appops set de.smartcomfort.app ASSOC_START allow
 # rückgängig: dieselben Befehle mit "default" statt "allow" (oder App deinstallieren)
 ```
 Startseite per Home-Taste: Einstellungen → System → Bedienungshilfen → „Smart Comfort Startseite“ an.
-Ausschalten macht die Home-Taste wieder zur normalen Google-TV-Taste.
+Derselbe Dienst belegt zwei Fernbedienungstasten neu: **Videotaste** (weiß, unter Netflix, Code 4057) →
+MediaPlayer IBO, **TV-Taste** (schwarz, unter Home, Code 4001) → HDMI 2 (PS5). Ausschalten macht Home-,
+Video- und TV-Taste wieder zu den normalen TCL-/Google-TV-Tasten.
 Braucht JDK 17 (`brew install openjdk@17`) und das Android-SDK mit `platforms;android-34` und
 `build-tools;34.0.0`.
 

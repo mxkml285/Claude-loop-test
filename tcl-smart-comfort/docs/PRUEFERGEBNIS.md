@@ -78,3 +78,14 @@ Backlight 20, LowBlueRay 1, Bildmodus 60, Helligkeit 50, Kontrast 100, HDR-Modus
 - Die Firmware zeigt keinen Schalter dafür (Genehmigungsschild nur Audio/Standort, App-Info ohne Eintrag).
 - Mit Maxis Freigabe gesetzt: `cmd appops set de.smartcomfort.app AUTO_START allow` und `ASSOC_START allow`.
   Bleibt bei `install -r` erhalten. Danach verband sich der Home-Dienst nach dem Update von selbst wieder.
+
+## Fernbedienungstasten (26.11.2026, 20:46 Uhr, App 1.2)
+- Ermittelt über das TV-Log (`InputReader`/`ViewRootImpl TIDD`), Fernbedienung `BT_RC833A_B5`:
+  - Weiße Taste mit blauem Videosymbol (unter Netflix): TCL-Keycode **4057** (scanCode 240), öffnet normal
+    `com.tcl.ui_mediaCenter`.
+  - Schwarze Taste mit Fernsehsymbol (unter Home): TCL-Keycode **4001**, öffnet normal die rote TV-App.
+- Neu belegt im vorhandenen `HomeKeyService` (Bedienungshilfe, Key-Filter), gleiche Aufrufe wie die Kacheln
+  (`Launch.app` / `Launch.ps5`). Down, Wiederholung und Up werden verschluckt, die Aktion startet beim Drücken.
+- Test mit echter Fernbedienung: Videotaste → IBO nach ca. 0,3 s, kein MediaCenter. TV-Taste in IBO →
+  Sitzung `TvPassThroughService/HW16` nach ca. 50 ms, keine TV-App-Startseite/EPG. Videotaste auf der PS5 →
+  zurück zu IBO. Danach meldete Smart Comfort „Quellenwechsel · Google-TV-Apps · schon richtig“.
