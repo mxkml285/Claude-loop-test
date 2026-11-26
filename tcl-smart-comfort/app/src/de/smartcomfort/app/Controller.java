@@ -119,6 +119,7 @@ final class Controller {
             status = "Fehler: " + ex;
             Log.w(TAG, "tick failed", ex);
         } finally {
+            Log.d(TAG, "tick " + reason + " -> " + status);
             e.putString("status", status).apply();
         }
     }

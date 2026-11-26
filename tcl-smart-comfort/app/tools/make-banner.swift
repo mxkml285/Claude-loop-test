@@ -1,4 +1,6 @@
-// Renders the 320x180 Google TV banner (res/drawable-xhdpi/banner.png). Run: swift tools/make-banner.swift <out.png>
+// Renders a 320x180 Google TV banner. Run: swift tools/make-banner.swift <out.png> [title] [subtitle]
+//   res/drawable-xhdpi/banner.png       = "Smart" "Comfort"
+//   res/drawable-xhdpi/banner_home.png  = "Start" "Smart Comfort"
 import AppKit
 let w = 320, h = 180
 let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h, bitsPerSample: 8,
@@ -15,7 +17,7 @@ NSBezierPath(ovalIn: NSRect(x: 44, y: 78, width: 40, height: 40)).fill()
 let style = NSMutableParagraphStyle(); style.alignment = .left
 let a1: [NSAttributedString.Key: Any] = [.font: NSFont.boldSystemFont(ofSize: 34), .foregroundColor: NSColor.white, .paragraphStyle: style]
 let a2: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 22), .foregroundColor: NSColor(white: 1, alpha: 0.85), .paragraphStyle: style]
-("Smart" as NSString).draw(at: NSPoint(x: 100, y: 92), withAttributes: a1)
-("Comfort" as NSString).draw(at: NSPoint(x: 100, y: 62), withAttributes: a2)
+((CommandLine.arguments.count > 2 ? CommandLine.arguments[2] : "Smart") as NSString).draw(at: NSPoint(x: 100, y: 92), withAttributes: a1)
+((CommandLine.arguments.count > 3 ? CommandLine.arguments[3] : "Comfort") as NSString).draw(at: NSPoint(x: 100, y: 62), withAttributes: a2)
 NSGraphicsContext.restoreGraphicsState()
 try! rep.representation(using: .png, properties: [:])!.write(to: URL(fileURLWithPath: CommandLine.arguments[1]))
