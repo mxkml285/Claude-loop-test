@@ -2,3 +2,4 @@ __pycache__/
 *.py[cod]
 probe-out/
 tcl-smart-comfort/probe-app/build/
+tcl-smart-comfort/app/build/

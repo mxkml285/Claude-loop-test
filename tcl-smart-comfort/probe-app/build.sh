@@ -2,6 +2,8 @@
 # Builds the Smart Comfort probe APK without Gradle: aapt2 + javac + d8 + apksigner.
 # Needs: JDK, Android SDK with platforms;android-34 and build-tools;34.0.0 (ANDROID_HOME).
 set -euo pipefail
+# d8 8.2 cannot read inner classes compiled by javac 27; use JDK 17.
+export JAVA_HOME=${JAVA_HOME_17:-/opt/homebrew/opt/openjdk@17} PATH=${JAVA_HOME_17:-/opt/homebrew/opt/openjdk@17}/bin:$PATH
 cd "$(dirname "$0")"
 SDK=${ANDROID_HOME:-/opt/homebrew/share/android-commandlinetools}
 BT="$SDK/build-tools/34.0.0"

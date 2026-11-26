@@ -56,3 +56,11 @@ Backlight 20, LowBlueRay 1, Bildmodus 60, Helligkeit 50, Kontrast 100, HDR-Modus
 - Zeitzone `Europe/Berlin`, automatische Zeit an.
 - PS5 per CEC an HDMI 2 erkannt; HDMI/CEC wird von der App nicht angefasst.
 - `tcl_app_settings_autoshopmode_enabled = 1` (Shop-Modus-Automatik, nur notiert).
+
+## App 1.0 auf dem TV (26.11.2026, 19:03 Uhr)
+- Installiert als `de.smartcomfort.app`, Minuten-Takt als exakter `RTC`-Alarm angemeldet (`USE_EXACT_ALARM`).
+- Quelle: `Settings.Secure tcl_sys_tv_input_current_device_id` ist für die App lesbar (21 = Apps).
+- 19:03:39 meldete die PS5 per CEC kurz Quelle 16 (HDMI 2): Die App zeigte „HDMI 2: keine Änderung“, danach
+  wieder „Google-TV-Apps · schon richtig“ (Plan 20/an = TV-Zustand).
+- Noch am TV zu bestätigen: Tuner-ID (1 oder 2) beim normalen Fernsehen, Verhalten nach Standby und nach
+  Neustart (TGuard), erster Planwechsel am 27.11. um 07:00 Uhr.
