@@ -32,6 +32,17 @@ adb connect <tv-ip>:5555
 adb install -r app/build/smartcomfort.apk
 adb uninstall de.smartcomfort.app              # restlos entfernen
 ```
+
+**Einmalig nach der ersten Installation (TCL-Autostart):** TCLs „Sicherheitsschutz“ (TGuard) verhindert, dass
+die App nach einem Neustart oder nach dem Beenden wieder anläuft. Dann fallen die Takte und die Home-Taste aus.
+Diese Firmware zeigt dafür keinen Schalter, deshalb wird der Autostart per ADB erlaubt, nur für diese App:
+```bash
+adb shell cmd appops set de.smartcomfort.app AUTO_START allow
+adb shell cmd appops set de.smartcomfort.app ASSOC_START allow
+# rückgängig: dieselben Befehle mit "default" statt "allow" (oder App deinstallieren)
+```
+Startseite per Home-Taste: Einstellungen → System → Bedienungshilfen → „Smart Comfort Startseite“ an.
+Ausschalten macht die Home-Taste wieder zur normalen Google-TV-Taste.
 Braucht JDK 17 (`brew install openjdk@17`) und das Android-SDK mit `platforms;android-34` und
 `build-tools;34.0.0`.
 

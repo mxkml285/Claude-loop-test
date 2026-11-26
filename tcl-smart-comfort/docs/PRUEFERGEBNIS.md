@@ -70,3 +70,11 @@ Backlight 20, LowBlueRay 1, Bildmodus 60, Helligkeit 50, Kontrast 100, HDR-Modus
   Sie lief also nach dem Standby ohne Mac weiter. Die Helligkeit stand vor dem Standby noch auf 20 (die
   Abweichung auf 30 kam nicht zustande), deshalb ist das Zurückstellen nach dem Aufwachen noch nicht belegt.
   Nach dem Standby war ADB (Port 5555) aus: Wahrscheinlich startet der TV beim Einschalten neu.
+
+## TCL-Autostart (TGuard, 26.11.2026, 19:44 Uhr)
+- `TclAppBoot` (Teil von `com.tcl.guard`, `ro.feature.tguard_app_boot=true`) blockierte das Binden der
+  Bedienungshilfe nach einem Update und die Zustellung der Takt-Alarme bei beendetem Prozess, Grund:
+  App-Op `AUTO_START` bzw. `ASSOC_START` = `ignore`. Das betrifft alle nachinstallierten Apps (auch IBO).
+- Die Firmware zeigt keinen Schalter dafür (Genehmigungsschild nur Audio/Standort, App-Info ohne Eintrag).
+- Mit Maxis Freigabe gesetzt: `cmd appops set de.smartcomfort.app AUTO_START allow` und `ASSOC_START allow`.
+  Bleibt bei `install -r` erhalten. Danach verband sich der Home-Dienst nach dem Update von selbst wieder.

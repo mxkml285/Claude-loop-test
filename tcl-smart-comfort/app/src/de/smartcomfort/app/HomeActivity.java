@@ -97,10 +97,10 @@ public class HomeActivity extends Activity {
 
         // Second row: four quiet tiles. Smart Comfort sits on the far right.
         LinearLayout small = row();
-        small.addView(smallTile(appIcon(YOUTUBE), "YouTube", v -> launch(YOUTUBE)), weightLp(dp(112), 0));
-        small.addView(smallTile(appIcon(NETFLIX), "Netflix", v -> launch(NETFLIX)), weightLp(dp(112), dp(22)));
-        small.addView(smallTile(appIcon(TCL_CHANNEL), "TCL Channel", v -> launch(TCL_CHANNEL)), weightLp(dp(112), dp(22)));
-        small.addView(smallTile(getDrawable(R.drawable.ic_comfort), "Smart Comfort",
+        small.addView(bannerTile(appBanner(YOUTUBE), appIcon(YOUTUBE), "YouTube", v -> launch(YOUTUBE)), weightLp(dp(112), 0));
+        small.addView(bannerTile(appBanner(NETFLIX), appIcon(NETFLIX), "Netflix", v -> launch(NETFLIX)), weightLp(dp(112), dp(22)));
+        small.addView(bannerTile(appBanner(TCL_CHANNEL), appIcon(TCL_CHANNEL), "TCL Channel", v -> launch(TCL_CHANNEL)), weightLp(dp(112), dp(22)));
+        small.addView(bannerTile(getDrawable(R.drawable.banner), getDrawable(R.drawable.ic_comfort), "Smart Comfort",
                 v -> startActivity(new Intent(this, MainActivity.class))), weightLp(dp(112), dp(22)));
         col.addView(small, lp(-1, -2, 0, dp(30), 0, 0));
 
@@ -316,6 +316,35 @@ public class HomeActivity extends Activity {
         t.setContentDescription(label);
         t.setOnClickListener(click);
         return t;
+    }
+
+    /** Small tile filled edge to edge with the app's TV banner; falls back to icon + label. */
+    private Tile bannerTile(Drawable banner, Drawable icon, String label, View.OnClickListener click) {
+        if (banner == null) return smallTile(icon, label, click);
+        Tile t = new Tile(this, dp(18), 1.07f);
+        t.setBackgroundColor(Color.rgb(12, 13, 15));
+        ImageView iv = new ImageView(this);
+        iv.setImageDrawable(banner);
+        iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        t.addView(iv, new FrameLayout.LayoutParams(-1, -1));
+        t.setContentDescription(label);
+        t.setOnClickListener(click);
+        return t;
+    }
+
+    /** The banner Google TV itself shows for the app (leanback activity first, then application). */
+    private Drawable appBanner(String pkg) {
+        PackageManager pm = getPackageManager();
+        try {
+            Intent i = pm.getLeanbackLaunchIntentForPackage(pkg);
+            if (i != null && i.getComponent() != null) {
+                Drawable d = pm.getActivityBanner(i.getComponent());
+                if (d != null) return d;
+            }
+            return pm.getApplicationBanner(pkg);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private Drawable appIcon(String pkg) {
