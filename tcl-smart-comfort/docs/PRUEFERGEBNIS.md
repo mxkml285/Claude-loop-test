@@ -50,7 +50,8 @@ Backlight 20, LowBlueRay 1, Bildmodus 60, Helligkeit 50, Kontrast 100, HDR-Modus
 - Einschränkung: Das Ausschalten (18:49:01) lag eine Sekunde nach Beginn der Vorher-Aufnahme. Die Getter
   sind sauber; die Einstellungslisten könnten teilweise noch den An-Zustand enthalten. Das Log zeigt aber
   keinen weiteren Setzbefehl.
-- Für die App: `act = 2` wie das Menü.
+- Das Menü nutzt `act = 2` (anwenden + speichern). Die App nutzt bewusst `act = 0` (nur anwenden), damit
+  die gespeicherten Bildwerte, auch die der PS5, unverändert bleiben.
 
 ## Sonstiges
 - Zeitzone `Europe/Berlin`, automatische Zeit an.
