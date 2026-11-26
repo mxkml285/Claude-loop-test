@@ -38,6 +38,8 @@ import java.util.Locale;
  */
 public class HomeActivity extends Activity {
     static final String IBO = "com.ibostore.meplayerib4k";
+    static final int GRAPHITE = Color.rgb(34, 34, 38);
+    static final int IBO_RED = Color.rgb(168, 36, 44);
     static final String YOUTUBE = "com.google.android.youtube.tv";
     static final String NETFLIX = "com.netflix.ninja";
     static final String TCL_CHANNEL = "com.tcl.waterfall.overseas";
@@ -233,18 +235,26 @@ public class HomeActivity extends Activity {
 
     private Tile iboTile() {
         Tile t = new Tile(this, dp(24), 1.04f);
-        t.setBackground(glass(Color.rgb(26, 24, 22), Color.rgb(12, 12, 13), Color.argb(46, 216, 170, 110), 0.15f, 0.15f, 24));
+        // Brushed silver like the IBO icon itself: light in the middle, darker toward the edges.
+        GradientDrawable silver = new GradientDrawable();
+        silver.setGradientType(GradientDrawable.RADIAL_GRADIENT);
+        silver.setGradientCenter(0.32f, 0.38f);
+        silver.setGradientRadius(dp(430));
+        silver.setColors(new int[]{Color.rgb(216, 216, 218), Color.rgb(198, 198, 201), Color.rgb(160, 161, 165)});
+        silver.setCornerRadius(dp(24));
+        GradientDrawable edge = new GradientDrawable();
+        edge.setColor(Color.TRANSPARENT);
+        edge.setCornerRadius(dp(24));
+        edge.setStroke(Math.max(1, dp(0.75f)), Color.argb(70, 255, 255, 255));
+        t.setBackground(new LayerDrawable(new Drawable[]{silver, edge}));
+        t.setRimColor(Color.rgb(150, 116, 70)); // darker bronze rim, visible on silver
         LinearLayout content = tileContent();
-        Drawable icon = appIcon(IBO);
-        if (icon != null) {
-            ImageView iv = new ImageView(this);
-            iv.setImageDrawable(icon);
-            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            iv.setOutlineProvider(new Tile.Rounded(dp(20)));
-            iv.setClipToOutline(true);
-            content.addView(iv, lp(dp(88), dp(88), 0, 0, dp(28), 0));
-        }
-        content.addView(titles("MediaPlayer", "IBO PLAYER  ·  FERNSEHEN", CHAMPAGNE), new LinearLayout.LayoutParams(0, -2, 1f));
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(R.drawable.ibo_logo);
+        logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        content.addView(logo, lp(dp(124), dp(92), 0, 0, dp(24), 0));
+        content.addView(titles("MediaPlayer", "FERNSEHEN", GRAPHITE, IBO_RED),
+                new LinearLayout.LayoutParams(0, -2, 1f));
         t.addView(content, new FrameLayout.LayoutParams(-1, -1));
         t.setContentDescription("MediaPlayer IBO");
         t.setOnClickListener(v -> launch(IBO));
@@ -260,7 +270,7 @@ public class HomeActivity extends Activity {
         logo.setImageDrawable(playStationLogo());
         logo.setColorFilter(IVORY);
         content.addView(logo, lp(dp(92), dp(92), 0, 0, dp(28), 0));
-        content.addView(titles("PlayStation 5", "SPIELEN", Color.rgb(170, 195, 245)), new LinearLayout.LayoutParams(0, -2, 1f));
+        content.addView(titles("PlayStation 5", "SPIELEN", IVORY, Color.rgb(170, 195, 245)), new LinearLayout.LayoutParams(0, -2, 1f));
         t.addView(content, new FrameLayout.LayoutParams(-1, -1));
         t.setContentDescription("PlayStation 5");
         t.setOnClickListener(v -> openPs5());
@@ -280,10 +290,10 @@ public class HomeActivity extends Activity {
         return c;
     }
 
-    private LinearLayout titles(String title, String subtitle, int accent) {
+    private LinearLayout titles(String title, String subtitle, int titleColor, int accent) {
         LinearLayout texts = new LinearLayout(this);
         texts.setOrientation(LinearLayout.VERTICAL);
-        TextView tt = text(31, IVORY, "sans-serif-thin");
+        TextView tt = text(31, titleColor, "sans-serif-thin");
         tt.setSingleLine(true);
         tt.setLetterSpacing(0.01f);
         tt.setText(title);

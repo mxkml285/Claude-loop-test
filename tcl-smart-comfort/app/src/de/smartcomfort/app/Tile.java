@@ -49,6 +49,9 @@ final class Tile extends FrameLayout {
         rimAnim.start();
     }
 
+    /** Focus rim colour for tiles whose surface is too light for the champagne rim. */
+    void setRimColor(int color) { rim.setStroke(Math.max(3, dp(2f)), color); }
+
     int dp(float v) { return Math.round(v * getResources().getDisplayMetrics().density); }
 
     final class RoundedOutline extends ViewOutlineProvider {
