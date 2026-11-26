@@ -14,8 +14,8 @@ import android.view.View;
  * Calm, slowly moving backdrop: a near-black base with three soft lights (champagne, deep blue, warm
  * amber) that drift on long, never-repeating-looking paths and breathe very gently. One full drift takes
  * about 40 seconds, so it reads as "alive" without ever pulling the eye. Redraws at most ~30 times a
- * second and only while the start page is visible. On top, LightTrail streaks glide from left to right
- * on calm waves, now and then with one slow loop.
+ * second and only while the start page is visible. On top, six silky LightTrail ribbons wave calmly,
+ * their crests and glints moving from left to right.
  */
 final class AmbientView extends View {
     private static final long FRAME_MS = 33;
@@ -38,12 +38,16 @@ final class AmbientView extends View {
             new Light(Color.rgb(200, 120, 80), 46, 0.50f, 0.50f, 0.55f, 0.34f, 0.26f, 53, 43, 29, 3.1f),
     };
     private final Paint base = new Paint();
-    /** Three streaks of light, started a few seconds apart so they rarely cross the screen together. */
-    private final LightTrail[] trails;
-    {
-        double now = SystemClock.uptimeMillis() / 1000.0;
-        trails = new LightTrail[]{new LightTrail(11, now + 1), new LightTrail(23, now + 8), new LightTrail(37, now + 15)};
-    }
+    /** Six silky ribbons of light, spread over the height, each with its own wave, pace and glint. */
+    private final LightTrail[] trails = {
+            //            colour                          alpha  y      amp    waves drift  glint phase
+            new LightTrail(Color.rgb(232, 206, 160), 0.30f, 0.20f, 0.07f, 1.3f, 34f, 13f, 0.00f),
+            new LightTrail(Color.rgb(150, 180, 255), 0.26f, 0.34f, 0.09f, 1.0f, 41f, 17f, 0.35f),
+            new LightTrail(Color.rgb(245, 236, 220), 0.22f, 0.48f, 0.06f, 1.6f, 29f, 11f, 0.62f),
+            new LightTrail(Color.rgb(222, 170, 140), 0.26f, 0.60f, 0.10f, 0.9f, 47f, 19f, 0.18f),
+            new LightTrail(Color.rgb(120, 150, 240), 0.24f, 0.74f, 0.08f, 1.2f, 37f, 15f, 0.80f),
+            new LightTrail(Color.rgb(232, 206, 160), 0.22f, 0.88f, 0.06f, 1.5f, 31f, 12f, 0.47f),
+    };
     private boolean running;
     private long lastFrame;
 
