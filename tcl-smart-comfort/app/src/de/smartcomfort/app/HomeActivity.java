@@ -71,11 +71,14 @@ public class HomeActivity extends Activity {
         }
     };
 
+    private AmbientView ambient;
+
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         FrameLayout root = new FrameLayout(this);
-        root.setBackground(backdrop());
+        ambient = new AmbientView(this);
+        root.addView(ambient, new FrameLayout.LayoutParams(-1, -1));
         root.setClipChildren(false);
 
         LinearLayout col = new LinearLayout(this);
@@ -115,12 +118,14 @@ public class HomeActivity extends Activity {
         Controller.prefs(this).registerOnSharedPreferenceChangeListener(statusListener);
         Controller.tick(this, "Startseite"); // fresh status; applies only on a real event (see Controller)
         tickClock.run();
+        ambient.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(tickClock);
+        ambient.stop();
         Controller.prefs(this).unregisterOnSharedPreferenceChangeListener(statusListener);
     }
 
@@ -394,22 +399,6 @@ public class HomeActivity extends Activity {
     private void toast(String s) { Toast.makeText(this, s, Toast.LENGTH_SHORT).show(); }
 
     // ---------------------------------------------------------------- helpers
-
-    private Drawable backdrop() {
-        GradientDrawable base = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.rgb(13, 13, 15), Color.rgb(6, 6, 8)});
-        GradientDrawable warm = new GradientDrawable();
-        warm.setGradientType(GradientDrawable.RADIAL_GRADIENT);
-        warm.setGradientCenter(0.05f, 0.0f);
-        warm.setGradientRadius(dp(560));
-        warm.setColors(new int[]{Color.argb(26, 216, 180, 130), Color.argb(0, 216, 180, 130)});
-        GradientDrawable cool = new GradientDrawable();
-        cool.setGradientType(GradientDrawable.RADIAL_GRADIENT);
-        cool.setGradientCenter(1.0f, 1.0f);
-        cool.setGradientRadius(dp(620));
-        cool.setColors(new int[]{Color.argb(22, 70, 100, 200), Color.argb(0, 70, 100, 200)});
-        return new LayerDrawable(new Drawable[]{base, warm, cool});
-    }
 
     private LinearLayout row() {
         LinearLayout r = new LinearLayout(this);
