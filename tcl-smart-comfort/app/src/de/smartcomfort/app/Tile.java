@@ -15,6 +15,8 @@ import android.widget.FrameLayout;
  * light rim. 180 ms, decelerating, no bounce.
  */
 final class Tile extends FrameLayout {
+    /** Champagne focus rim. */
+    static final int RIM = Color.rgb(216, 194, 157);
     private final GradientDrawable rim = new GradientDrawable();
     private final float radius;
     private final float scaleFocused;
@@ -30,7 +32,7 @@ final class Tile extends FrameLayout {
         setOutlineProvider(new RoundedOutline());
         rim.setCornerRadius(radiusPx);
         rim.setColor(Color.TRANSPARENT);
-        rim.setStroke(dp(2), Color.WHITE);
+        rim.setStroke(Math.max(2, dp(1.5f)), RIM);
         rim.setAlpha(0);
         setForeground(rim);
         setOnFocusChangeListener((v, has) -> animateFocus(has));
@@ -38,11 +40,11 @@ final class Tile extends FrameLayout {
 
     private void animateFocus(boolean has) {
         animate().scaleX(has ? scaleFocused : 1f).scaleY(has ? scaleFocused : 1f)
-                .translationZ(has ? dp(18) : 0).setDuration(180)
+                .translationZ(has ? dp(18) : 0).setDuration(220)
                 .setInterpolator(new DecelerateInterpolator()).start();
         if (rimAnim != null) rimAnim.cancel();
-        rimAnim = ValueAnimator.ofInt(rim.getAlpha(), has ? 200 : 0);
-        rimAnim.setDuration(180);
+        rimAnim = ValueAnimator.ofInt(rim.getAlpha(), has ? 235 : 0);
+        rimAnim.setDuration(220);
         rimAnim.addUpdateListener(a -> rim.setAlpha((Integer) a.getAnimatedValue()));
         rimAnim.start();
     }

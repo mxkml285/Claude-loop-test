@@ -1,0 +1,5 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+  <!-- Smart Comfort mark: warm disc with a night crescent (same motif as the banner). -->
+  <path android:fillColor="#FFF3E6D0" android:pathData="M10,5a7,7 0 1,0 0.001,0z"/>
+  <path android:fillColor="#FF1C2550" android:pathData="M14,4.5a5.5,5.5 0 1,0 0.001,0z"/>
+</vector>
