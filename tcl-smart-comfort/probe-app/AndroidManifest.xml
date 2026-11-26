@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Smart Comfort Prüf-App: liest nur getBacklight und getLowBlueRay. Keine Berechtigungen, kein Internet. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.smartcomfort.probe"
+    android:versionCode="1"
+    android:versionName="0.1-probe">
+
+    <uses-sdk android:minSdkVersion="30" android:targetSdkVersion="34" />
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+    <application android:label="Smart Comfort Prüfung" android:allowBackup="false">
+        <uses-library android:name="com.tcl.tv.display" android:required="false" />
+        <activity android:name=".ProbeActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
