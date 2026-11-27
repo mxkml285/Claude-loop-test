@@ -211,9 +211,7 @@ public class HomeActivity extends Activity {
             boolean ec = planEc;
             TclDisplay d = TclDisplay.connect();
             try { if (d != null) { bl = d.getBacklight(); ec = d.getLowBlueRay() != 0; } } catch (Exception ignored) { }
-            boolean manual = bl != planBl || ec != planEc;
-            shown = "Smart Comfort   ·   Helligkeit " + bl + "   ·   Eye Care " + (ec ? "an" : "aus")
-                    + (manual ? "   ·   manuell, Plan ab " + next + " Uhr" : "   ·   ab " + next + " Uhr neu");
+            shown = "Smart Comfort   ·   Helligkeit " + bl + "   ·   Eye Care " + (ec ? "an" : "aus");
         } else {
             shown = "Smart Comfort   ·   " + (s.isEmpty() ? "startet" : s);
         }
