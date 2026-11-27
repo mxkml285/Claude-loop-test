@@ -204,9 +204,16 @@ public class HomeActivity extends Activity {
         String next = Schedule.nextBoundary(now).format(DateTimeFormatter.ofPattern("HH:mm"));
         String shown;
         if (active) {
-            int bl = Schedule.backlight(now.toLocalTime());
-            boolean ec = Schedule.eyeCare(now.toLocalTime());
-            shown = "Smart Comfort   ·   Helligkeit " + bl + "   ·   Eye Care " + (ec ? "an" : "aus") + "   ·   ab " + next + " Uhr neu";
+            // The TV's real values (same as the Control Center); "manuell" when they differ from the plan.
+            int planBl = Schedule.backlight(now.toLocalTime());
+            boolean planEc = Schedule.eyeCare(now.toLocalTime());
+            int bl = planBl;
+            boolean ec = planEc;
+            TclDisplay d = TclDisplay.connect();
+            try { if (d != null) { bl = d.getBacklight(); ec = d.getLowBlueRay() != 0; } } catch (Exception ignored) { }
+            boolean manual = bl != planBl || ec != planEc;
+            shown = "Smart Comfort   ·   Helligkeit " + bl + "   ·   Eye Care " + (ec ? "an" : "aus")
+                    + (manual ? "   ·   manuell, Plan ab " + next + " Uhr" : "   ·   ab " + next + " Uhr neu");
         } else {
             shown = "Smart Comfort   ·   " + (s.isEmpty() ? "startet" : s);
         }
