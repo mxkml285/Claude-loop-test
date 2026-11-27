@@ -13,7 +13,7 @@ import android.view.accessibility.AccessibilityEvent;
  *
  * - Home key: consumed, start page opened.
  * - Video key (TCL 4057): consumed, MediaPlayer IBO opened. TV key (TCL 4001): consumed, HDMI 2 (PS5).
- * - 123 key (TCL 4056): short press toggles Eye Care with a status pill (not while gaming), long press
+ * - 123 key (TCL 4056): short press toggles Eye Care with a status pill (also while gaming), long press
  *   opens the Control Center. The number pad is no longer reachable with this key.
  * - Also runs Ps5Watch (PS5 on -> HDMI 2, PS5 rest/off -> start page), as this service is always alive.
  * - Google TV home appears by other means (after boot, Back from an app opened there): replaced by
@@ -86,18 +86,16 @@ public class HomeKeyService extends AccessibilityService {
     }
 
     private void toggleEyeCare() {
-        if (Ps5Watch.gaming(this)) {
-            overlay.show("Gaming aktiv", "EYE CARE BLEIBT UNVERÄNDERT", false);
-            return;
-        }
+        // Also while gaming (on request): only Eye Care changes, brightness and game settings stay as they are.
+        boolean gaming = Ps5Watch.gaming(this);
         TclDisplay d = TclDisplay.connect();
         try {
             boolean on = d != null && d.getLowBlueRay() == 0;
             if (d != null && d.setLowBlueRay(on)) {
-                Controller.hold(this, d.getBacklight(), on);
-                Log.i(TAG, "123 kurz -> Eye Care " + on);
+                if (!gaming) Controller.hold(this, d.getBacklight(), on);
+                Log.i(TAG, "123 kurz -> Eye Care " + on + (gaming ? " (Gaming)" : ""));
                 overlay.show(on ? "Eye Care aktiviert" : "Eye Care deaktiviert",
-                        "BIS ZUM NÄCHSTEN ZEITPLAN-WECHSEL", on);
+                        gaming ? "GAMING · NUR EYE CARE GEÄNDERT" : "BIS ZUM NÄCHSTEN ZEITPLAN-WECHSEL", on);
                 return;
             }
         } catch (Exception ex) { Log.w(TAG, "eye care", ex); }

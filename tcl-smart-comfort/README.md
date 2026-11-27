@@ -47,7 +47,7 @@ MediaPlayer IBO, **TV-Taste** (schwarz, unter Home, Code 4001) → HDMI 2 (PS5).
 Video- und TV-Taste wieder zu den normalen TCL-/Google-TV-Tasten.
 
 **Ab App 1.3** (ebenfalls über diesen Dienst):
-- **123-Taste** (Code 4056): kurz = Eye Care an/aus mit Hinweis oben im Bild (beim Spielen gesperrt),
+- **123-Taste** (Code 4056): kurz = Eye Care an/aus mit Hinweis oben im Bild (auch beim Spielen),
   lang (0,6 s) = Control Center. Der Nummernblock ist über diese Taste nicht mehr erreichbar.
 - **Control Center:** Helligkeit 0–100, Eye Care, Automatik, Sleep-Timer 15/30/60/90 Min, „Bildschirm aus,
   Ton läuft weiter“ (startet TCLs eigenes „Nur Ton“). Erscheint rechts über dem laufenden Bild (IBO, TV und
