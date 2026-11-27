@@ -37,19 +37,28 @@ public class HomeKeyService extends AccessibilityService {
 
     private Ps5Watch ps5;
     private StatusOverlay overlay;
+    private ControlCenter controlCenter;
+    private final Runnable keep = new Runnable() {
+        @Override public void run() {
+            Controller.keep(HomeKeyService.this);
+            handler.postDelayed(this, 5_000);
+        }
+    };
     private final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
     private boolean key123Down, key123Long;
     private final Runnable key123LongPress = new Runnable() {
         @Override public void run() {
             key123Long = true;
             Log.i(TAG, "123 lang -> Control Center");
-            Launch.start(HomeKeyService.this, new Intent(HomeKeyService.this, ControlCenterActivity.class));
+            controlCenter.open();
         }
     };
 
     @Override
     protected void onServiceConnected() {
         overlay = new StatusOverlay(this);
+        controlCenter = new ControlCenter(this);
+        handler.postDelayed(keep, 5_000);
         ps5 = new Ps5Watch(this);
         ps5.start();
     }
@@ -57,6 +66,8 @@ public class HomeKeyService extends AccessibilityService {
     @Override
     public boolean onUnbind(Intent i) {
         if (ps5 != null) ps5.stop();
+        handler.removeCallbacks(keep);
+        if (controlCenter != null) controlCenter.close();
         return super.onUnbind(i);
     }
 
@@ -83,6 +94,7 @@ public class HomeKeyService extends AccessibilityService {
         try {
             boolean on = d != null && d.getLowBlueRay() == 0;
             if (d != null && d.setLowBlueRay(on)) {
+                Controller.hold(this, d.getBacklight(), on);
                 Log.i(TAG, "123 kurz -> Eye Care " + on);
                 overlay.show(on ? "Eye Care aktiviert" : "Eye Care deaktiviert",
                         "BIS ZUM NÄCHSTEN ZEITPLAN-WECHSEL", on);
@@ -96,6 +108,7 @@ public class HomeKeyService extends AccessibilityService {
     protected boolean onKeyEvent(KeyEvent e) {
         int code = e.getKeyCode();
         if (code == KEY_TCL_123) { key123(e); return true; }
+        if (controlCenter != null && controlCenter.isOpen() && controlCenter.onKey(e)) return true;
         if (code != KeyEvent.KEYCODE_HOME && code != KEY_TCL_VIDEO && code != KEY_TCL_TV) return false;
         // Down, repeats and up are all swallowed, so the key's original action never runs.
         if (code == KeyEvent.KEYCODE_HOME) {

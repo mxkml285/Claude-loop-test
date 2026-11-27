@@ -110,7 +110,8 @@ final class Controller {
                 if (ec != wantEc) { did.append(" EyeCare ").append(wantEc ? "an" : "aus").append(d.setLowBlueRay(wantEc) ? "" : "(Fehler)"); }
                 String why = woke ? "Aufwachen" : reason;
                 log(c, why + " · " + sourceName(src) + (did.length() == 0 ? " · schon richtig" : " ·" + did));
-                e.putString("lastSlot", slot).putString("lastContext", context);
+                e.putString("lastSlot", slot).putString("lastContext", context)
+                        .putInt("holdBl", wantBl).putBoolean("holdEc", wantEc);
                 bl = d.getBacklight();
                 ec = d.getLowBlueRay() != 0;
             }
@@ -121,6 +122,40 @@ final class Controller {
         } finally {
             Log.d(TAG, "tick " + reason + " -> " + status);
             e.putString("status", status).apply();
+        }
+    }
+
+    /** Values to keep until the next plan event: the plan's, or a manual change from the Control Center / 123 key. */
+    static void hold(Context c, int bl, boolean ec) {
+        prefs(c).edit().putInt("holdBl", bl).putBoolean("holdEc", ec).apply();
+    }
+
+    /**
+     * TCL reloads the picture mode's stored backlight (and Eye Care) on its own, e.g. when a video starts
+     * or the signal changes, because the plan is applied without saving into the TV's presets. Checked every
+     * few seconds by HomeKeyService: if the TV drifted from the held values, they are set again.
+     */
+    static synchronized void keep(Context c) {
+        try {
+            if (!enabled(c) || FirmwareGuard.problem() != null) return;
+            int src = source(c);
+            if (!allowedSource(src)) return;
+            SharedPreferences p = prefs(c);
+            java.time.LocalTime now = ZonedDateTime.now(Schedule.ZONE).toLocalTime();
+            int wantBl = p.getInt("holdBl", Schedule.backlight(now));
+            boolean wantEc = p.getBoolean("holdEc", Schedule.eyeCare(now));
+            TclDisplay d = TclDisplay.connect();
+            if (d == null) return;
+            int bl = d.getBacklight();
+            boolean ec = d.getLowBlueRay() != 0;
+            if (bl == wantBl && ec == wantEc) return;
+            StringBuilder did = new StringBuilder("TCL-Rücksetzung korrigiert ·");
+            if (bl != wantBl) did.append(" Helligkeit ").append(bl).append("→").append(wantBl).append(d.setBacklight(wantBl) ? "" : "(Fehler)");
+            if (ec != wantEc) did.append(" EyeCare ").append(wantEc ? "an" : "aus").append(d.setLowBlueRay(wantEc) ? "" : "(Fehler)");
+            log(c, did.toString());
+            p.edit().putString("status", "Aktiv · " + sourceName(src) + " · Helligkeit " + wantBl + " · Eye Care " + (wantEc ? "an" : "aus")).apply();
+        } catch (Exception ex) {
+            Log.w(TAG, "keep failed", ex);
         }
     }
 

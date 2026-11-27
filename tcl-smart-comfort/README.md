@@ -50,8 +50,12 @@ Video- und TV-Taste wieder zu den normalen TCL-/Google-TV-Tasten.
 - **123-Taste** (Code 4056): kurz = Eye Care an/aus mit Hinweis oben im Bild (beim Spielen gesperrt),
   lang (0,6 s) = Control Center. Der Nummernblock ist über diese Taste nicht mehr erreichbar.
 - **Control Center:** Helligkeit 0–100, Eye Care, Automatik, Sleep-Timer 15/30/60/90 Min, „Bildschirm aus,
-  Ton läuft weiter“ (startet TCLs eigenes „Nur Ton“). Zeigt die echten Werte des Fernsehers. Manuelle
+  Ton läuft weiter“ (startet TCLs eigenes „Nur Ton“). Erscheint rechts über dem laufenden Bild (IBO, TV und
+  PS5 laufen weiter), schließt nach 20 s ohne Taste. Zeigt die echten Werte des Fernsehers. Manuelle
   Änderungen bleiben bis zum nächsten Planwechsel, Quellenwechsel oder Aufwachen.
+- **Werte halten:** TCL lädt beim Videostart den im Bildmodus gespeicherten Wert neu. Die App prüft alle 5 s
+  und stellt den gewünschten Wert wieder her (nur bei Apps/Tuner, nie bei HDMI). Änderungen im TCL-Bildmenü
+  werden dadurch ebenfalls zurückgestellt; zum Ändern das Control Center nehmen.
 - **PS5 automatisch:** PS5 an → HDMI 2 (nach 2 s stabil), PS5 Ruhemodus/aus → Startseite (nach 6 s stabil),
   danach gilt wieder der Zeitplan. Erkannt über Androids HDMI-Eingangsstatus, es werden keine CEC-Befehle gesendet.
 
