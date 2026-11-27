@@ -45,6 +45,21 @@ Startseite per Home-Taste: Einstellungen → System → Bedienungshilfen → „
 Derselbe Dienst belegt zwei Fernbedienungstasten neu: **Videotaste** (weiß, unter Netflix, Code 4057) →
 MediaPlayer IBO, **TV-Taste** (schwarz, unter Home, Code 4001) → HDMI 2 (PS5). Ausschalten macht Home-,
 Video- und TV-Taste wieder zu den normalen TCL-/Google-TV-Tasten.
+
+**Ab App 1.3** (ebenfalls über diesen Dienst):
+- **123-Taste** (Code 4056): kurz = Eye Care an/aus mit Hinweis oben im Bild (beim Spielen gesperrt),
+  lang (0,6 s) = Control Center. Der Nummernblock ist über diese Taste nicht mehr erreichbar.
+- **Control Center:** Helligkeit 0–100, Eye Care, Automatik, Sleep-Timer 15/30/60/90 Min, „Bildschirm aus,
+  Ton läuft weiter“ (startet TCLs eigenes „Nur Ton“). Zeigt die echten Werte des Fernsehers. Manuelle
+  Änderungen bleiben bis zum nächsten Planwechsel, Quellenwechsel oder Aufwachen.
+- **PS5 automatisch:** PS5 an → HDMI 2 (nach 2 s stabil), PS5 Ruhemodus/aus → Startseite (nach 6 s stabil),
+  danach gilt wieder der Zeitplan. Erkannt über Androids HDMI-Eingangsstatus, es werden keine CEC-Befehle gesendet.
+
+Der Sleep-Timer braucht einmalig eine Freigabe (ohne sie zeigt das Control Center „keine Berechtigung“):
+```bash
+adb shell pm grant de.smartcomfort.app android.permission.WRITE_SECURE_SETTINGS
+# rückgängig: adb shell pm revoke de.smartcomfort.app android.permission.WRITE_SECURE_SETTINGS
+```
 Braucht JDK 17 (`brew install openjdk@17`) und das Android-SDK mit `platforms;android-34` und
 `build-tools;34.0.0`.
 

@@ -2,8 +2,8 @@
 <!-- Smart Comfort: zeitgesteuerte Helligkeit und Eye Care für den TCL 55P8L. Kein Internet. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.smartcomfort.app"
-    android:versionCode="3"
-    android:versionName="1.2">
+    android:versionCode="4"
+    android:versionName="1.3">
 
     <uses-sdk android:minSdkVersion="30" android:targetSdkVersion="34" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
@@ -12,6 +12,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Exact, non-waking minute ticks so the 07/17/18 Uhr changes happen on time. -->
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- Only for TCL's sleep timer (Settings.Global tcl_app_power_off_time_delay). Granted once via
+         adb shell pm grant; without it the Control Center shows "keine Berechtigung". -->
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
     <!-- Android 11+ package visibility: the start page needs to see and launch exactly these apps. -->
     <queries>
@@ -53,6 +56,13 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Control Center: glass panel over the current picture (123 key long press). -->
+        <activity android:name=".ControlCenterActivity" android:exported="false"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:taskAffinity="de.smartcomfort.app.cc"
+            android:theme="@style/ControlCenterTheme" />
 
         <service android:name=".HomeKeyService" android:exported="false"
             android:label="@string/home_key_label"

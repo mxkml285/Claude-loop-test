@@ -13,6 +13,9 @@ import android.view.accessibility.AccessibilityEvent;
  *
  * - Home key: consumed, start page opened.
  * - Video key (TCL 4057): consumed, MediaPlayer IBO opened. TV key (TCL 4001): consumed, HDMI 2 (PS5).
+ * - 123 key (TCL 4056): short press toggles Eye Care with a status pill (not while gaming), long press
+ *   opens the Control Center. The number pad is no longer reachable with this key.
+ * - Also runs Ps5Watch (PS5 on -> HDMI 2, PS5 rest/off -> start page), as this service is always alive.
  * - Google TV home appears by other means (after boot, Back from an app opened there): replaced by
  *   the start page, unless the user chose "Google TV" on the start page, until the next Home press.
  */
@@ -28,10 +31,71 @@ public class HomeKeyService extends AccessibilityService {
     static final int KEY_TCL_VIDEO = 4057;
     /** TCL remote: black key with the TV symbol (below Home), normally the red TV app. */
     static final int KEY_TCL_TV = 4001;
+    /** TCL remote: "123" key (number pad). Short = Eye Care on/off, long = Control Center. */
+    static final int KEY_TCL_123 = 4056;
+    static final long LONG_PRESS_MS = 600;
+
+    private Ps5Watch ps5;
+    private StatusOverlay overlay;
+    private final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private boolean key123Down, key123Long;
+    private final Runnable key123LongPress = new Runnable() {
+        @Override public void run() {
+            key123Long = true;
+            Log.i(TAG, "123 lang -> Control Center");
+            Launch.start(HomeKeyService.this, new Intent(HomeKeyService.this, ControlCenterActivity.class));
+        }
+    };
+
+    @Override
+    protected void onServiceConnected() {
+        overlay = new StatusOverlay(this);
+        ps5 = new Ps5Watch(this);
+        ps5.start();
+    }
+
+    @Override
+    public boolean onUnbind(Intent i) {
+        if (ps5 != null) ps5.stop();
+        return super.onUnbind(i);
+    }
+
+    /** Key repeats arrive after this filter, so a long press is timed from the first DOWN. */
+    private void key123(KeyEvent e) {
+        if (e.getAction() == KeyEvent.ACTION_DOWN) {
+            if (e.getRepeatCount() > 0 || key123Down) return;
+            key123Down = true;
+            key123Long = false;
+            handler.postDelayed(key123LongPress, LONG_PRESS_MS);
+        } else if (e.getAction() == KeyEvent.ACTION_UP) {
+            key123Down = false;
+            handler.removeCallbacks(key123LongPress);
+            if (!key123Long && !e.isCanceled()) toggleEyeCare();
+        }
+    }
+
+    private void toggleEyeCare() {
+        if (Ps5Watch.gaming(this)) {
+            overlay.show("Gaming aktiv", "EYE CARE BLEIBT UNVERÄNDERT", false);
+            return;
+        }
+        TclDisplay d = TclDisplay.connect();
+        try {
+            boolean on = d != null && d.getLowBlueRay() == 0;
+            if (d != null && d.setLowBlueRay(on)) {
+                Log.i(TAG, "123 kurz -> Eye Care " + on);
+                overlay.show(on ? "Eye Care aktiviert" : "Eye Care deaktiviert",
+                        "BIS ZUM NÄCHSTEN ZEITPLAN-WECHSEL", on);
+                return;
+            }
+        } catch (Exception ex) { Log.w(TAG, "eye care", ex); }
+        overlay.show("Eye Care nicht verfügbar", null, false);
+    }
 
     @Override
     protected boolean onKeyEvent(KeyEvent e) {
         int code = e.getKeyCode();
+        if (code == KEY_TCL_123) { key123(e); return true; }
         if (code != KeyEvent.KEYCODE_HOME && code != KEY_TCL_VIDEO && code != KEY_TCL_TV) return false;
         // Down, repeats and up are all swallowed, so the key's original action never runs.
         if (code == KeyEvent.KEYCODE_HOME) {

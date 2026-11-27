@@ -89,3 +89,17 @@ Backlight 20, LowBlueRay 1, Bildmodus 60, Helligkeit 50, Kontrast 100, HDR-Modus
 - Test mit echter Fernbedienung: Videotaste → IBO nach ca. 0,3 s, kein MediaCenter. TV-Taste in IBO →
   Sitzung `TvPassThroughService/HW16` nach ca. 50 ms, keine TV-App-Startseite/EPG. Videotaste auf der PS5 →
   zurück zu IBO. Danach meldete Smart Comfort „Quellenwechsel · Google-TV-Apps · schon richtig“.
+
+## Phase 5: PS5-Automatik, Control Center, 123-Taste (App 1.3)
+
+- **HDMI-Status:** `TvInputManager.getInputState` für `com.tcl.tvinput/.TvPassThroughService/HW16` liefert
+  0 = PS5 an, 1 = Ruhemodus. TCL schaltet beim Einschalten selbst nach ca. 10 s auf HDMI 2, beim Ruhemodus
+  aber nicht zurück; das übernimmt jetzt die App. Getestet: an → HDMI 2, Ruhemodus → Startseite.
+- **Sleep-Timer:** `Settings.Global tcl_app_power_off_time_delay` (ms, -1 = aus); TCL setzt
+  `tcl_app_power_off_time_expire` selbst. Braucht WRITE_SECURE_SETTINGS (per `pm grant`). Getestet.
+- **Bildschirm aus mit Ton:** TCLs `TPowerManager.setBackLightState` verlangt eine Systemsignatur, nicht nutzbar.
+  Stattdessen startet die App TCLs eigenen Dialog: Dienst `com.android.tv.settings/com.tcl.settings.ShowWindowService`,
+  Action `com.tcl.settings.SHOW_WINDOW`, Extra `Type=audio_only`. Getestet.
+- **123-Taste:** Code 4056 (scanCode 240). Tastenwiederholungen kommen erst hinter dem Bedienungshilfe-Filter,
+  daher wird der lange Druck per Timer ab dem ersten Drücken gemessen. Mit `adb shell input keyevent`
+  simulierte Tasten erreichen den Filter nicht; getestet mit der echten Fernbedienung.
