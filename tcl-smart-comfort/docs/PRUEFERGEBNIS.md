@@ -103,3 +103,15 @@ Backlight 20, LowBlueRay 1, Bildmodus 60, Helligkeit 50, Kontrast 100, HDR-Modus
 - **123-Taste:** Code 4056 (scanCode 240). Tastenwiederholungen kommen erst hinter dem Bedienungshilfe-Filter,
   daher wird der lange Druck per Timer ab dem ersten Drücken gemessen. Mit `adb shell input keyevent`
   simulierte Tasten erreichen den Filter nicht; getestet mit der echten Fernbedienung.
+
+## Red Mode (App 1.4)
+
+- **TCL-Dienst:** `setRGBMode` (68) `(windowId 0, type 0, mode, act 0)`, `getRGBMode` (69); Modi aus TCLs
+  Bildmenü: 0 aus, 1 nur Rot, 2 nur Grün, 3 nur Blau. Intensität über `setContrast` (31) / `getContrast` (32),
+  Ausgangswert 100. Weißabgleich-Gain (57/58) wäre nur ±15 Schritte und verlangt eingeschalteten
+  benutzerdefinierten Weißabgleich, daher nicht genutzt.
+- **Android-Farbfilter** (SurfaceFlinger/ColorDisplayService) verworfen: braucht Systemrechte bzw. wirkt nicht
+  auf die Videoebene.
+- **Rote Taste:** `KEYCODE_PROG_RED` 183 (scanCode 398), läuft durch den Bedienungshilfe-Filter und wird dort
+  vollständig abgefangen.
+- Getestet: an/aus per Taste und Control Center, Intensität, Wiederherstellung (RGB 0, Kontrast 100).

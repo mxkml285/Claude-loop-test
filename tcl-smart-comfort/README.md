@@ -53,6 +53,11 @@ Video- und TV-Taste wieder zu den normalen TCL-/Google-TV-Tasten.
   Ton läuft weiter“ (startet TCLs eigenes „Nur Ton“). Erscheint rechts über dem laufenden Bild (IBO, TV und
   PS5 laufen weiter), schließt nach 20 s ohne Taste. Zeigt die echten Werte des Fernsehers. Manuelle
   Änderungen bleiben bis zum nächsten Planwechsel, Quellenwechsel oder Aufwachen.
+- **Red Mode (App 1.4):** rote Farbtaste (R, Code 183) = an/aus mit Hinweis oben im Bild; im Control Center
+  Schalter und Intensität 20–100 %. Nutzt TCLs eigenen „RGB-Modus: Nur Rot“ (Grün und Blau aus, echte
+  Kanalsteuerung, wirkt in allen Apps); Intensität = Kontrast. Vorherige Werte werden gespeichert und beim
+  Ausschalten zurückgeschrieben, nichts wird in den Bildvoreinstellungen gespeichert. Auf HDMI (PS5) nie aktiv.
+  Kein Zeitplan.
 - **Werte halten:** TCL lädt beim Videostart den im Bildmodus gespeicherten Wert neu. Die App prüft alle 5 s
   und stellt den gewünschten Wert wieder her (nur bei Apps/Tuner, nie bei HDMI). Änderungen im TCL-Bildmenü
   werden dadurch ebenfalls zurückgestellt; zum Ändern das Control Center nehmen.

@@ -15,6 +15,7 @@ import android.view.accessibility.AccessibilityEvent;
  * - Video key (TCL 4057): consumed, MediaPlayer IBO opened. TV key (TCL 4001): consumed, HDMI 2 (PS5).
  * - 123 key (TCL 4056): short press toggles Eye Care with a status pill (also while gaming), long press
  *   opens the Control Center. The number pad is no longer reachable with this key.
+ * - Red colour key (KEYCODE_PROG_RED 183): Red Mode on/off with a status pill (never on HDMI).
  * - Also runs Ps5Watch (PS5 on -> HDMI 2, PS5 rest/off -> start page), as this service is always alive.
  * - Google TV home appears by other means (after boot, Back from an app opened there): replaced by
  *   the start page, unless the user chose "Google TV" on the start page, until the next Home press.
@@ -41,7 +42,8 @@ public class HomeKeyService extends AccessibilityService {
     private final Runnable keep = new Runnable() {
         @Override public void run() {
             Controller.keep(HomeKeyService.this);
-            handler.postDelayed(this, 5_000);
+            RedMode.keep(HomeKeyService.this);
+            handler.postDelayed(this, 3_000);
         }
     };
     private final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
@@ -85,6 +87,18 @@ public class HomeKeyService extends AccessibilityService {
         }
     }
 
+    void toggleRedMode() {
+        if (Ps5Watch.gaming(this) && !RedMode.on(this)) {
+            overlay.show("Red Mode nicht beim Gaming", "HDMI-EINGÄNGE BLEIBEN UNVERÄNDERT", false);
+            return;
+        }
+        String r = RedMode.toggle(this);
+        Log.i(TAG, "Rote Taste -> Red Mode " + r);
+        if ("on".equals(r)) overlay.show("Red Mode aktiviert", "INTENSITÄT " + RedMode.intensity(this) + " %", true);
+        else if ("off".equals(r)) overlay.show("Red Mode deaktiviert", "FARBEN WIEDERHERGESTELLT", false);
+        else overlay.show("Red Mode nicht verfügbar", null, false);
+    }
+
     private void toggleEyeCare() {
         // Also while gaming (on request): only Eye Care changes, brightness and game settings stay as they are.
         boolean gaming = Ps5Watch.gaming(this);
@@ -106,6 +120,11 @@ public class HomeKeyService extends AccessibilityService {
     protected boolean onKeyEvent(KeyEvent e) {
         int code = e.getKeyCode();
         if (code == KEY_TCL_123) { key123(e); return true; }
+        if (code == KeyEvent.KEYCODE_PROG_RED) {
+            // Red colour key: Red Mode on/off. Swallowed completely, so apps no longer see it.
+            if (e.getAction() == KeyEvent.ACTION_DOWN && e.getRepeatCount() == 0) toggleRedMode();
+            return true;
+        }
         if (controlCenter != null && controlCenter.isOpen() && controlCenter.onKey(e)) return true;
         if (code != KeyEvent.KEYCODE_HOME && code != KEY_TCL_VIDEO && code != KEY_TCL_TV) return false;
         // Down, repeats and up are all swallowed, so the key's original action never runs.

@@ -47,7 +47,7 @@ final class ControlCenter {
     private boolean gaming;
     private int backlight = -1;
     private boolean eyeCare;
-    private Row rBright, rEye, rAuto, rSleep, rScreen;
+    private Row rBright, rEye, rRed, rRedLevel, rAuto, rSleep, rScreen;
     private Row[] rows;
     private int sel;
     private View bar, barFill;
@@ -83,7 +83,7 @@ final class ControlCenter {
         }
         panel.animate().alpha(1f).translationX(0).setDuration(240).start();
         refresh();
-        select(gaming ? 2 : 0);
+        select(gaming ? 4 : 0);
         h.post(ticker);
         touch();
     }
@@ -151,12 +151,15 @@ final class ControlCenter {
         if (r == rBright) nudgeBacklight(5 * dir);
         else if (r == rSleep) nudgeSleep(dir);
         else if (r == rEye) toggleEyeCare();
+        else if (r == rRed) toggleRed();
+        else if (r == rRedLevel) { RedMode.setIntensity(c, RedMode.intensity(c) + RedMode.STEP * dir); refresh(); }
         else if (r == rAuto) toggleAuto();
     }
 
     private void ok() {
         Row r = rows[sel];
         if (r == rEye) toggleEyeCare();
+        else if (r == rRed) toggleRed();
         else if (r == rAuto) toggleAuto();
         else if (r == rSleep) nudgeSleep(1);
         else if (r == rScreen) screenOff();
@@ -171,6 +174,10 @@ final class ControlCenter {
         rBright.setValue(backlight < 0 ? "–" : String.valueOf(backlight));
         rEye.setLocked(gaming || display == null);
         rEye.setValue(eyeCare ? "An" : "Aus");
+        rRed.setLocked(gaming || display == null);
+        rRed.setValue(RedMode.on(c) ? "An" : "Aus");
+        rRedLevel.setLocked(gaming);
+        rRedLevel.setValue(RedMode.intensity(c) + " %");
         rAuto.setValue(Controller.enabled(c) ? "An" : "Aus");
         rScreen.setValue("OK");
         bar.post(() -> {
@@ -193,6 +200,12 @@ final class ControlCenter {
     private void toggleEyeCare() {
         if (gaming || display == null) return;
         try { if (display.setLowBlueRay(!eyeCare)) Controller.hold(c, backlight, !eyeCare); } catch (Exception e) { Log.w(TAG, "eye", e); }
+        refresh();
+    }
+
+    private void toggleRed() {
+        if (gaming || display == null) return;
+        RedMode.toggle(c);
         refresh();
     }
 
@@ -317,10 +330,12 @@ final class ControlCenter {
         barBox.addView(barFill, new FrameLayout.LayoutParams(0, dp(4), Gravity.CENTER_VERTICAL));
         rBright.addBelow(barBox);
         rEye = new Row(c, "Eye Care");
+        rRed = new Row(c, "Red Mode");
+        rRedLevel = new Row(c, "Red-Intensität");
         rAuto = new Row(c, "Automatik (Zeitplan)");
         rSleep = new Row(c, "Sleep-Timer");
         rScreen = new Row(c, "Bildschirm aus, Ton läuft weiter");
-        rows = new Row[]{rBright, rEye, rAuto, rSleep, rScreen};
+        rows = new Row[]{rBright, rEye, rRed, rRedLevel, rAuto, rSleep, rScreen};
         for (Row r : rows) col.addView(r, lp(-1, -2, 0, 0, 0, dp(6)));
 
         TextView foot = text(11, HomeActivity.IVORY_FAINT, "sans-serif-light");
@@ -338,7 +353,7 @@ final class ControlCenter {
         Row(Context ctx, String name) {
             super(ctx);
             setOrientation(VERTICAL);
-            setPadding(dp(18), dp(13), dp(18), dp(13));
+            setPadding(dp(18), dp(11), dp(18), dp(11));
             bg.setCornerRadius(dp(14));
             setBackground(bg);
             LinearLayout line = new LinearLayout(ctx);
